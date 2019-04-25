@@ -15,7 +15,6 @@ class DailyReport extends Model
         'user_id',
         'title',
         'content',
-        'answer',
         'reporting_time',
     ];
 

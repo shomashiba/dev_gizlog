@@ -5,9 +5,9 @@
 <div class="main-wrap">
   <div class="container">
     {!! Form::open(['route' => ['daily_report.update', $daily_report->id], 'method' => 'PUT']) !!}
-      {!! Form::input('hidden', 'user_id', Auth::id() ) !!}
+      {!! Form::input('hidden', 'user_id', Auth::id(), ['class' => 'form-control'] ) !!}
         <div class="form-group form-size-small">
-          {!! Form::input('date', 'date', $daily_report->reporting_time->format('Y/m/d (D)'), ['class' => 'form-control']) !!}
+          {!! Form::input('date', 'reporting_time', $daily_report->reporting_time->format('Y-m-d'), ['class' => 'form-control']) !!}
           <span class="help-block"></span>
         </div>
 
@@ -17,7 +17,7 @@
         </div>
 
         <div class="form-group {{ $errors->has('content') ? 'has-error' : '' }}">
-          {!! Form::textarea('contents', $daily_report->content, ['class' => 'form-control', 'cols' => '50', 'rows' => '10']) !!}
+          {!! Form::textarea('content', $daily_report->content, ['class' => 'form-control']) !!}
           <span class="help-block">{{ $errors->first('content') }}</span>
         </div>
       {!! Form::submit('update', ['class' => 'btn btn-success pull-right']) !!}

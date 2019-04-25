@@ -53,7 +53,7 @@ class DailyReportController extends Controller
     {
         $inputs = $request->all();
         $this->daily_report->create($inputs);
-        return redirect()->route('daily_report.index');
+        return redirect()->to('daily_report');
     }
 
     /**
@@ -91,7 +91,7 @@ class DailyReportController extends Controller
     {
         $inputs = $request->all();
         $this->daily_report->find($id)->fill($inputs)->save();
-        return redirect()->route('daily_report.index');
+        return redirect()->to('daily_report');
     }
 
     /**
