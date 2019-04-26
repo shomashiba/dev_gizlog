@@ -49,7 +49,7 @@ class DailyReportController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(DailyReportRequest $request)
     {
         $inputs = $request->all();
         $this->daily_report->create($inputs);
