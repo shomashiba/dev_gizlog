@@ -5,11 +5,13 @@
 <div class="main-wrap">
   <div class="container">
     {!! Form::open(['route' => 'daily_report.store']) !!}
-      {!! Form::input('hidden', 'user_id', Auth::id() ) !!}
+      {!! Form::input('hidden', 'user_id', Auth::id() , ['class' => 'form-control']) !!}
         <div class="form-group form-size-small {{ $errors->has('date') ? 'has-error' : '' }}">
-          {!! Form::input('date', 'date', Carbon::now()->format('Y-m-d'), ['class' => 'form-control']) !!}
+          {!! Form::input('date', 'reporting_time', Carbon::now()->format('Y-m-d'), ['class' => 'form-control']) !!}
           <span class="help-block">{{ $errors->first('date') }}</span>
         </div>
+
+
         <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
           {!! Form::input('text','title', null, ['class' => 'form-control', 'placeholder' => 'Title']) !!}
           <span class="help-block">{{ $errors->first('title') }}</span>
