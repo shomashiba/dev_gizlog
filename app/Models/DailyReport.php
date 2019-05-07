@@ -24,4 +24,24 @@ class DailyReport extends Model
         'deleted_at',
         'reporting_time',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function fetchAllDailyReports($userId)
+    {
+        return $this->filterEqual('user_id', $userId)
+                    ->orderby('reporting_time', 'desc')
+                    ->get();
+    }
+
+    public function fetchSearchingDailyReports($userId, $conditions)
+    {
+        return $this->filterLike('reporting_time', $conditions['search-month'])
+                    ->filterEqual('user_id', $userId)
+                    ->orderby('reporting_time', 'desc')
+                    ->get();
+    }
 }
