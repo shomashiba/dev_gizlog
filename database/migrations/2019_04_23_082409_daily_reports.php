@@ -31,6 +31,6 @@ class DailyReports extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('daily_reports');
     }
 }

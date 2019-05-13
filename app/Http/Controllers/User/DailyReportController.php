@@ -26,11 +26,7 @@ class DailyReportController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
-        //$daily_reports = $this->daily_report->all();
         $inputs = $request->all();
-        //dd($daily_reports);
-        //$daily_report= $this->$daily_report->getAll(Auth::id());
-
         if (empty($inputs)) {
             $daily_reports = $this->daily_report->fetchAllDailyReports($userId);
         } else {
