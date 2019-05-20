@@ -12,7 +12,25 @@ class Question extends Model
     use SoftDeletes, SearchingScope;
 
     protected $fillable = [
-
+        'user_id',
+        'tag_category_id',
+        'title',
+        'content',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function Comment()
+    {
+        return $this->hasMany('App\Models\Comment');
+    }
+
+    public function TagCategory()
+    {
+        return $this->belongsTo('App\Models\TagCategory');
+    }
 }
 
