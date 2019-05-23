@@ -32,5 +32,12 @@ class Question extends Model
     {
         return $this->belongsTo('App\Models\TagCategory');
     }
+
+    public function fetchQuestion($userId)
+    {
+        return $this->where('user_id', $userId)
+                    ->orderby('created_at', 'desc')
+                    ->get();
+    }
 }
 

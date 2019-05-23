@@ -33,7 +33,7 @@ class QuestionsRequest extends FormRequest
     public function messages()
     {
         return [
-            'a'
+            'a',
         ]
     }
 }

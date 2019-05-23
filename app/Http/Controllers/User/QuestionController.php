@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\QuestionsRequest;
 use App\Models\Question;
 use App\Models\TagCategory;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,13 +14,14 @@ class QuestionController extends Controller
 {
     protected $question;
     protected $tag_category;
+    protected $comment;
 
-    public function __construct(Question $question , TagCategory $tag_category)
+    public function __construct(Question $question , TagCategory $tag_category , Comment $comment)
     {
         $this->middleware('auth');
         $this->question = $question;
-        $this->middleware('auth');
         $this->tag_category = $tag_category;
+        $this->comment = $comment;
     }
 
     /**
@@ -66,9 +68,17 @@ class QuestionController extends Controller
         return redirect()->to('question');
     }
 
-    public function showMypage()
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function showMypage($userId)
     {
-        //
+        $userId = Auth::id();
+        //$inputs = $request->all();
+        $questions = $this->question->fetchQuestion($userId);
+        return view('user.question.mypage', compact('questions'));
     }
 
     /**
@@ -79,7 +89,8 @@ class QuestionController extends Controller
      */
     public function show($id)
     {
-        //
+        $question = $this->question->find($id);
+        return view('user.question.show', compact('question'));
     }
 
     /**
@@ -90,7 +101,9 @@ class QuestionController extends Controller
      */
     public function edit($id)
     {
-        //
+        $question = $this->question->find($id);
+        $tag_categories = $this->tag_category->all();
+        return view('user.question.edit',compact('question','tag_categories'));
     }
 
     /**
@@ -102,7 +115,9 @@ class QuestionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $inputs = $request->all();
+        $this->question->find($id)->fill($inputs)->save();
+        return redirect()->to('question');
     }
 
     /**
@@ -113,6 +128,18 @@ class QuestionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->question->find($id)->delete();
+        return redirect()->to('question');
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function commentStore(Request $request)
+    {
+        $inputs = $request->all();
+        $this->comment->create($inputs);
+        return redirect()->to('question');
     }
 }
