@@ -33,8 +33,12 @@ class QuestionsRequest extends FormRequest
     public function messages()
     {
         return [
-            'a',
-        ]
+            'tag_category_id.max' => '選択肢から選んでください。',
+            'tag_category_id.required' =>'入力必須の項目です。',
+            'title.max'   => '30文字以内で入力してください。',
+            'title.required' =>'入力必須の項目です。',
+            'content.max'   => '250文字以内で入力してください。',
+            'content.required' =>'入力必須の項目です。',
+        ];
     }
 }
-

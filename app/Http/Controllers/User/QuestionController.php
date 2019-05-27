@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\QuestionsRequest;
+use App\Http\Requests\User\CommentRequest;
 use App\Models\Question;
 use App\Models\TagCategory;
 use App\Models\Comment;
@@ -16,7 +17,7 @@ class QuestionController extends Controller
     protected $tag_category;
     protected $comment;
 
-    public function __construct(Question $question , TagCategory $tag_category , Comment $comment)
+    public function __construct(Question $question, TagCategory $tag_category, Comment $comment)
     {
         $this->middleware('auth');
         $this->question = $question;
@@ -32,11 +33,20 @@ class QuestionController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
-        //$inputs = $request->all();
-
-        $questions = $this->question->all();
+        $inputs = $request->all();
         $tag_categories = $this->tag_category->all();
-        return view('user.question.index', compact('questions','tag_categories'));
+
+        if((array_key_exists('tag_category_id', $inputs ))&&(array_key_exists('search_word', $inputs))){
+            $questions = $this->question->fetchSearchTagQuestion($inputs);
+        }elseif(array_key_exists('tag_category_id', $inputs )){
+            $questions = $this->question->fetchTagQuestion($inputs);
+        }elseif(array_key_exists('search_word', $inputs)) {
+            $questions = $this->question->fetchSearchingQuestion($inputs);
+        } else {
+            $questions = $this->question->fetchQuestion();
+        }
+
+        return view('user.question.index', compact('questions','tag_categories','inputs'));
     }
 
     /**
@@ -61,7 +71,7 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(QuestionsRequest $request)
     {
         $inputs = $request->all();
         $this->question->create($inputs);
@@ -73,11 +83,10 @@ class QuestionController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function showMypage($userId)
+    public function showMypage()
     {
         $userId = Auth::id();
-        //$inputs = $request->all();
-        $questions = $this->question->fetchQuestion($userId);
+        $questions = $this->question->fetchPersonalQuestion($userId);
         return view('user.question.mypage', compact('questions'));
     }
 
@@ -103,7 +112,7 @@ class QuestionController extends Controller
     {
         $question = $this->question->find($id);
         $tag_categories = $this->tag_category->all();
-        return view('user.question.edit',compact('question','tag_categories'));
+        return view('user.question.edit', compact('question','tag_categories'));
     }
 
     /**
@@ -113,7 +122,7 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(QuestionsRequest $request, $id)
     {
         $inputs = $request->all();
         $this->question->find($id)->fill($inputs)->save();
@@ -136,7 +145,7 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function commentStore(Request $request)
+    public function commentStore(CommentRequest $request)
     {
         $inputs = $request->all();
         $this->comment->create($inputs);

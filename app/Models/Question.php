@@ -33,11 +33,37 @@ class Question extends Model
         return $this->belongsTo('App\Models\TagCategory');
     }
 
-    public function fetchQuestion($userId)
+    public function fetchQuestion()
     {
-        return $this->where('user_id', $userId)
+        return $this->orderby('created_at', 'desc')
+                    ->get();
+    }
+
+    public function fetchSearchingQuestion($conditions)
+    {
+        return $this->filterLike('title', $conditions['search_word'])
                     ->orderby('created_at', 'desc')
                     ->get();
     }
-}
 
+    public function fetchPersonalQuestion($userId)
+    {
+        return $this->where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+    }
+
+    public function fetchTagQuestion($conditions)
+    {
+        return $this->filterLike('tag_category_id', $conditions['tag_category_id'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+    }
+    public function fetchSearchTagQuestion($conditions)
+    {
+        return $this->filterLike('tag_category_id', $conditions['tag_category_id'])
+                    ->filterLike('title', $conditions['search_word'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+    }
+}

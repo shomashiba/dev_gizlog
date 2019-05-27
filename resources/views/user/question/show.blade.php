@@ -37,16 +37,16 @@
       @endforeach
     </div>
   <div class="comment-box">
-    <form action="{{ route('question.commentStore', $question->id) }}" method="post">
+    <form action="{{ route('question.commentStore',$question->id) }}" method="post">
       @csrf
       <input name="user_id" type="hidden" value="{{Auth::user()->id }}">
       <input name="question_id" type="hidden" value="{{$question->id}}">
       <div class="comment-title">
         <img src="{{ Auth::user()->avatar }}" class="avatar-img"><p>コメントを投稿する</p>
       </div>
-      <div class="comment-body">
+      <div class="comment-body @if(!empty($errors->first('comment'))) has-error @endif">
         <textarea class="form-control" placeholder="Add your comment..." name="comment" cols="50" rows="10"></textarea>
-        <span class="help-block"></span>
+        <span class="help-block">{{$errors->first('comment')}}</span>
       </div>
       <div class="comment-bottom">
         <button type="submit" class="btn btn-success">
