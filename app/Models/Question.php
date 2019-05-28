@@ -55,13 +55,13 @@ class Question extends Model
 
     public function fetchTagQuestion($conditions)
     {
-        return $this->filterLike('tag_category_id', $conditions['tag_category_id'])
+        return $this->filterEqual('tag_category_id', $conditions['tag_category_id'])
                     ->orderBy('created_at', 'desc')
                     ->get();
     }
     public function fetchSearchTagQuestion($conditions)
     {
-        return $this->filterLike('tag_category_id', $conditions['tag_category_id'])
+        return $this->filterEqual('tag_category_id', $conditions['tag_category_id'])
                     ->filterLike('title', $conditions['search_word'])
                     ->orderBy('created_at', 'desc')
                     ->get();

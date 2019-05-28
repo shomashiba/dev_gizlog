@@ -60,18 +60,27 @@ class QuestionController extends Controller
         return view('user.question.create', compact('tag_categories'));
     }
 
-    public function confirm()
+    public function confirm(QuestionsRequest $request, $questionId = null)
     {
-        return view('user.question.confirm');
+        $inputs = $request->all();
+        $category = $this->tag_category->find($inputs['tag_category_id'])->name;
+        return view('user.question.confirm', compact('inputs','category','questionId'));
     }
-
+/*
+    public function confirm(QuestionsRequest $request, $questionId = null)
+    {
+        $inputs = $request->all();
+        $category = $this->category->find($inputs['tag_category_id'])->name;
+        return view('user.question.confirm', compact('inputs', 'category', 'questionId'));
+    }
+*/
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(QuestionsRequest $request)
+    public function store(Request $request)
     {
         $inputs = $request->all();
         $this->question->create($inputs);
@@ -122,10 +131,11 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(QuestionsRequest $request, $id)
+    public function update(Request $request, $questionId)
     {
         $inputs = $request->all();
-        $this->question->find($id)->fill($inputs)->save();
+        dd($questionId);
+        $this->question->find($questionId)->fill($inputs)->save();
         return redirect()->to('question');
     }
 
