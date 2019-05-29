@@ -60,20 +60,13 @@ class QuestionController extends Controller
         return view('user.question.create', compact('tag_categories'));
     }
 
-    public function confirm(QuestionsRequest $request, $questionId = null)
+    public function confirm(QuestionsRequest $request)
     {
         $inputs = $request->all();
         $category = $this->tag_category->find($inputs['tag_category_id'])->name;
-        return view('user.question.confirm', compact('inputs','category','questionId'));
+        return view('user.question.confirm', compact('inputs','category'));
     }
-/*
-    public function confirm(QuestionsRequest $request, $questionId = null)
-    {
-        $inputs = $request->all();
-        $category = $this->category->find($inputs['tag_category_id'])->name;
-        return view('user.question.confirm', compact('inputs', 'category', 'questionId'));
-    }
-*/
+
     /**
      * Store a newly created resource in storage.
      *
@@ -131,11 +124,10 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $questionId)
+    public function update(Request $request, $id)
     {
         $inputs = $request->all();
-        dd($questionId);
-        $this->question->find($questionId)->fill($inputs)->save();
+        $this->question->find($id)->fill($inputs)->save();
         return redirect()->to('question');
     }
 

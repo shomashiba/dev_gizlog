@@ -26,7 +26,7 @@
     @if($inputs['confirm'] === 'create')
     <form action="{{ route('question.store') }}" method="post">
     @else
-    <form action="{{ route('question.update',['$questionId']) }}" method="post">
+    <form action="{{ route('question.update',['$id']) }}" method="post">
       @method('PUT')
     @endif
       @csrf
