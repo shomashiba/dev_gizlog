@@ -6,6 +6,7 @@
 <div class="main-wrap">
   <div class="container">
     {!! Form::open(['route' => ['question.confirm', $question->id], 'method' => 'POST']) !!}
+      {!! Form::input('hidden', 'id', $question->id, ['class' => 'form-control']) !!}
       {!! Form::input('hidden', 'user_id', Auth::id(), ['class' => 'form-control']) !!}
       <div class="form-group @if(!empty($errors->first('tag_category_id'))) has-error @endif">
         <select name='tag_category_id' class = "form-control selectpicker form-size-small" id ="pref_id">

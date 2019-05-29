@@ -24,10 +24,10 @@
   </div>
   <div class="btn-bottom-wrapper">
     @if($inputs['confirm'] === 'create')
-    <form action="{{ route('question.store') }}" method="post">
+      <form action="{{ route('question.store') }}" method="post">
     @else
-    <form action="{{ route('question.update',['$id']) }}" method="post">
-      @method('PUT')
+      <form action="{{ route('question.update', $inputs['id']) }}" method="post">
+        @method('PUT')
     @endif
       @csrf
       <input name="user_id" type="hidden" value="{{Auth::user()->id}}">
