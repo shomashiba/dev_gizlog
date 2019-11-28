@@ -19,7 +19,7 @@ class Attendance extends Model
         'end_time'
     ];
 
-    protected $datas = [
+    protected $dates = [
         'date',
         'start_time',
         'end_time'
@@ -31,4 +31,9 @@ class Attendance extends Model
     ];
 
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

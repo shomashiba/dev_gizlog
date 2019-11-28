@@ -33,7 +33,8 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendance = $this->attendance->where('date', Carbon::now()->format('Y-m-d'))
+        $attendance = $this->attendance->where('user_id', Auth::id())
+            ->where('date', Carbon::now()->format('Y-m-d'))
             ->first();
         $status = $this->confirmAttendance($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
@@ -150,5 +151,33 @@ class AttendanceController extends Controller
             $modify
         );
         return redirect()->route('attendance.index');
+    }
+
+    /**
+     * マイページ画面
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function showMypage()
+    {
+        $attendances = $this->attendance->where('user_id', Auth::id())
+            ->get();
+        $totalStudyTime = $this->calcStudyTime($attendances);
+        return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
+    }
+
+    public function calcStudyTime($datas)
+    {
+        $datas = $datas->whereNotIn('end_time', '')->all();
+        $totalStudyTime = 0;
+
+        foreach ($datas as $data) {
+            $startTime = $data->start_time;
+            $endTime = $data->end_time;
+            $studyTime = $startTime->diffInHours($endTime);
+            $totalStudyTime += $studyTime;
+        }
+
+        return $totalStudyTime;
     }
 }

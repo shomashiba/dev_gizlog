@@ -47,9 +47,7 @@ Route::group(['prefix' => '/', 'user.', 'namespace' => 'User'], function () {
     Route::get('attendance/modify', ['as' => 'attendance.showModify', 'uses' => 'AttendanceController@showModify']);
     Route::post('attendance/modify', ['as' => 'attendance.registerModify', 'uses' => 'AttendanceController@registerModify']);
 
-    Route::get('attendance/mypage', function () {
-        return view('user.attendance.mypage');
-    });
+    Route::get('attendance/mypage', ['as' => 'attendance.mypage', 'uses' => 'AttendanceController@showMypage']);
 
 });
 
