@@ -34,12 +34,17 @@ class AttendanceController extends Controller
     public function index()
     {
         $attendance = $this->attendance->where('date', Carbon::now()->format('Y-m-d'))
-                                       ->first();
-                                    //    dd($attendance);
+            ->first();
         $status = $this->confirmAttendance($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
     }
 
+    /**
+     * ユーザーの出退勤状態の判別
+     *
+     * @param array $data
+     * @return string
+     */
     public function confirmAttendance($data)
     {
         if (!empty($data->is_absent)) {
@@ -51,14 +56,20 @@ class AttendanceController extends Controller
         }
 
         if (!empty($data->start_time) && empty($data->end_time)) {
-            return 'start';
+            return 'attend';
         }
 
         if (!empty($data->start_time) && !empty($data->end_time)) {
-            return 'end';
+            return 'leave';
         }
     }
 
+    /**
+     * 出勤時間登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function registerStartTime(Request $request) 
     {
         $attendance = $request->all();
@@ -67,6 +78,13 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.index');
     }
 
+    /**
+     * 退勤時間登録
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function registerEndTime(Request $request, $id) 
     {
         $attendance = $request->all();
@@ -74,5 +92,22 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.index');
     }
 
+    public function showAbsence()
+    {
+        return view('user.attendance.absence');
+    }
 
+    public function registerAbsence(Request $request)
+    {
+        $absence['absent_reason'] = $request->input('absent_reason');
+        $absence['is_absent'] = true;
+        $this->attendance->updateOrCreate(
+            [
+                'date' => Carbon::now()->format('Y-m-d'), 
+                'user_id' => Auth::id()
+            ],
+            $absence
+        );
+        return redirect()->route('attendance.index');
+    }
 }

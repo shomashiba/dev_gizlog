@@ -39,12 +39,11 @@ Route::group(['prefix' => '/', 'user.', 'namespace' => 'User'], function () {
     Route::resource('question', QuestionController::class);
 
     Route::get('attendance', ['as' => 'attendance.index', 'uses' => 'AttendanceController@index']);
-    Route::post('attendance', ['as' => 'attendance.register.start', 'uses' => 'AttendanceController@registerStartTime']);
-    Route::put('attendance/{id}', ['as' => 'attendance.register.end', 'uses' => 'AttendanceController@registerEndTime']);
+    Route::post('attendance', ['as' => 'attendance.registerStart', 'uses' => 'AttendanceController@registerStartTime']);
+    Route::put('attendance/{id}', ['as' => 'attendance.registerEnd', 'uses' => 'AttendanceController@registerEndTime']);
 
-    Route::get('attendance/absence', function () {
-        return view('user.attendance.absence');
-    });
+    Route::get('attendance/absence', ['as' => 'attendance.showAbsence', 'uses' => 'AttendanceController@showAbsence']);
+    Route::post('attendance/absence', ['as' => 'attendance.registerAbsence', 'uses' => 'AttendanceController@registerAbsence']);
     Route::get('attendance/modify', function () {
         return view('user.attendance.modify');
     });
