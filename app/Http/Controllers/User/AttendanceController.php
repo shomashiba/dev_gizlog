@@ -92,11 +92,22 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.index');
     }
 
+    /**
+     * 欠席登録画面
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function showAbsence()
     {
         return view('user.attendance.absence');
     }
 
+    /**
+     * 欠席登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function registerAbsence(Request $request)
     {
         $absence['absent_reason'] = $request->input('absent_reason');
@@ -107,6 +118,36 @@ class AttendanceController extends Controller
                 'user_id' => Auth::id()
             ],
             $absence
+        );
+        return redirect()->route('attendance.index');
+    }
+
+    /**
+     * 修正申請画面
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function showModify()
+    {
+        return view('user.attendance.modify');
+    }
+
+    /**
+     * 修正申請登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function registerModify(Request $request)
+    {
+        $modify = $request->all();
+        $modify['is_request'] = true;
+        $this->attendance->updateOrCreate(
+            [
+                'date' => $modify['date'], 
+                'user_id' => Auth::id()
+            ],
+            $modify
         );
         return redirect()->route('attendance.index');
     }
