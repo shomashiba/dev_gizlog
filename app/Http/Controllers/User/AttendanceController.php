@@ -43,7 +43,7 @@ class AttendanceController extends Controller
     /**
      * ユーザーの出退勤状態の判別
      *
-     * @param array $data
+     * @param Illuminate\Support\Collection $data
      * @return string
      */
     public function confirmAttendance($data)
@@ -174,17 +174,17 @@ class AttendanceController extends Controller
      */
     public function calcStudyTime($datas)
     {
-        $totalStudyTime = 0;
-
+        $totalStudyHours = 0;
+        $convertHours = 60;
         $datas = $datas->whereNotIn('end_time', '')->all();
 
         foreach ($datas as $data) {
             $startTime = $data->start_time;
             $endTime = $data->end_time;
-            $studyTime = $startTime->diffInHours($endTime);
-            $totalStudyTime += $studyTime;
+            $studyMinutes = $startTime->diffInMinutes($endTime);
+            $totalStudyHours += round($studyMinutes / $convertHours);
         }
 
-        return $totalStudyTime;
+        return $totalStudyHours;
     }
 }
