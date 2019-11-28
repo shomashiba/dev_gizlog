@@ -166,10 +166,17 @@ class AttendanceController extends Controller
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
     }
 
+    /**
+     * 出社日の合計学習時間の産出
+     *
+     * @param Illuminate\Support\Collection $datas
+     * @return int $totalStudyTime
+     */
     public function calcStudyTime($datas)
     {
-        $datas = $datas->whereNotIn('end_time', '')->all();
         $totalStudyTime = 0;
+
+        $datas = $datas->whereNotIn('end_time', '')->all();
 
         foreach ($datas as $data) {
             $startTime = $data->start_time;
