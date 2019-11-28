@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\User;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\User\AttendanceRequest;
+use App\Http\Requests\User\RegisterTimeRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+
+const CONVERT_HOURS = 60;
 
 class AttendanceController extends Controller
 {
@@ -71,9 +74,9 @@ class AttendanceController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function registerStartTime(Request $request) 
+    public function registerStartTime(RegisterTimeRequest $request) 
     {
-        $attendance = $request->all();
+        $attendance = $request->validated();
         $attendance['user_id'] = Auth::id();
         $this->attendance->create($attendance);
         return redirect()->route('attendance.index');
@@ -86,9 +89,9 @@ class AttendanceController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function registerEndTime(Request $request, $id) 
+    public function registerEndTime(RegisterTimeRequest $request, $id) 
     {
-        $attendance = $request->all();
+        $attendance = $request->validated();
         $this->attendance->find($id)->update($attendance);
         return redirect()->route('attendance.index');
     }
@@ -109,9 +112,9 @@ class AttendanceController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function registerAbsence(Request $request)
+    public function registerAbsence(AttendanceRequest $request)
     {
-        $absence['absent_reason'] = $request->input('absent_reason');
+        $absence = $request->validated();
         $absence['is_absent'] = true;
         $this->attendance->updateOrCreate(
             [
@@ -139,11 +142,11 @@ class AttendanceController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function registerModify(Request $request)
+    public function registerModify(AttendanceRequest $request)
     {
-        $modify = $request->all();
+        $modify = $request->validated();
         $modify['is_request'] = true;
-        $this->attendance->updateOrCreate(
+        $this->attendance->update(
             [
                 'date' => $modify['date'], 
                 'user_id' => Auth::id()
@@ -161,6 +164,7 @@ class AttendanceController extends Controller
     public function showMypage()
     {
         $attendances = $this->attendance->where('user_id', Auth::id())
+            ->orderBy('date','desc')
             ->get();
         $totalStudyTime = $this->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
@@ -175,16 +179,12 @@ class AttendanceController extends Controller
     public function calcStudyTime($datas)
     {
         $totalStudyHours = 0;
-        $convertHours = 60;
         $datas = $datas->whereNotIn('end_time', '')->all();
 
         foreach ($datas as $data) {
-            $startTime = $data->start_time;
-            $endTime = $data->end_time;
-            $studyMinutes = $startTime->diffInMinutes($endTime);
-            $totalStudyHours += round($studyMinutes / $convertHours);
+            $studyMinutes = $data->start_time->diffInMinutes($data->end_time);
+            $totalStudyHours += round($studyMinutes / CONVERT_HOURS);
         }
-
         return $totalStudyHours;
     }
 }

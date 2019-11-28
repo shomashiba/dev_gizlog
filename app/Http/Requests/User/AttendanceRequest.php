@@ -24,20 +24,21 @@ class AttendanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'request_content' => 'sometimes|required|max:200',
-            'absent_reason'   => 'sometimes|required|max:200',
-            'date'            => 'sometimes|required',
+            'absent_reason'  => 'sometimes|required|max:500',
+            'request_reason' => 'sometimes|required|max:500',
+            'date'           => 'sometimes|required|before_or_equal:now|exists:attendance',
         ];
     }
 
     public function messages()
     {
         return [
-            'request_content.required' => '入力必須の項目です',
-            'request_content.max'      => '200文字以内で入力してください。',
-            'absent_reason.required'   => '入力必須の項目です',
-            'absent_reason.max'        => '200文字以内で入力してください。',
+            'required'                 => '入力必須の項目です',
+            'absent_reason.max'        => '500文字以内で入力してください。',
+            'request_reason.max'       => '500文字以内で入力してください。',
             'date.required'            => '入力必須の項目です',
+            'date.before_or_equal'     => '今日以前の日付を入力してください。',
+            'date'
         ];
     }
 }
