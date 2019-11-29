@@ -8,9 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Services\AttendanceService;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-
-const DATETIME = 'Y-m-d';
 
 class AttendanceController extends Controller
 {
@@ -40,9 +37,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendance = $this->attendance->fetchAttendance(
-            Auth::id(), Carbon::today()->format(DATETIME)
-        );
+        $attendance = $this->attendance->fetchAttendance(Auth::id(), $this->service->today);
         $status = $this->service->confirmAttendanceState($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
     }
@@ -55,9 +50,9 @@ class AttendanceController extends Controller
      */
     public function registerStartTime(RegisterTimeRequest $request) 
     {
-        $attendance = $request->validated();
-        $attendance['user_id'] = Auth::id();
-        $this->attendance->create($attendance);
+        $inputs = $request->validated();
+        $inputs['user_id'] = Auth::id();
+        $this->attendance->create($inputs);
         return redirect()->route('attendance.index');
     }
 
@@ -93,15 +88,9 @@ class AttendanceController extends Controller
      */
     public function registerAbsence(AttendanceRequest $request)
     {
-        $absence = $request->validated();
-        $absence['is_absent'] = true;
-        $this->attendance->updateOrCreate(
-            [
-                'date' => Carbon::today()->format(DATETIME), 
-                'user_id' => Auth::id()
-            ],
-            $absence
-        );
+        $inputs = $request->validated();
+        $inputs['user_id'] = Auth::id();
+        $this->attendance->storeAbsence($inputs, $this->service->today);
         return redirect()->route('attendance.index');
     }
 
@@ -123,10 +112,9 @@ class AttendanceController extends Controller
      */
     public function registerModify(AttendanceRequest $request)
     {
-        $modify = $request->validated();
-        $modify['is_request'] = true;
-        $this->attendance->feachAttendance(Auth::id(), $modify['date'])
-                         ->update($modify);
+        $inputs = $request->validated();
+        $inputs['user_id'] = Auth::id();
+        $this->attendance->storeModify($inputs, $this->service->today);
         return redirect()->route('attendance.index');
     }
 

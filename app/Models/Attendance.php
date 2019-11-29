@@ -38,17 +38,61 @@ class Attendance extends Model
     }
 
     /**
-     * 日付とユーザーIDによる勤怠情報取得
+     * 日付とユーザーIDによる勤怠情報
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $id
      * @param string $day
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFetchAttendance($query, $id, $day)
+    public function scopeSearchAttendance($query, $id, $date)
     {
         return $query->where('user_id', $id)
-                     ->where('date', $day);
+                     ->where('date', $date);
+    }
+
+    /**
+     * 今日の勤怠情報を取得
+     *
+     * @param int $id
+     * @param string $date
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function fetchAttendance($id, $date)
+    {
+        return $this->searchAttendance($id, $date)
+                    ->first();
+    }
+
+    /**
+     * 欠席情報を保存
+     *
+     * @param array $datas
+     * @param string $date
+     */
+    public function storeAbsence($datas, $date)
+    {
+        $datas['is_absent'] = true;
+        $this->updateOrCreate(
+            [
+                'user_id' => $datas['user_id'],
+                'date' => $date
+            ],
+            $datas
+        );
+    }
+
+    /**
+     * 修正申請を保存
+     *
+     * @param array $datas
+     * @param string $date
+     */
+    public function storeModify($datas, $date)
+    {
+        $datas['is_request'] = true;
+        $this->searchAttendance($datas['user_id'], $date)
+             ->update($datas);
     }
 
     /**

@@ -2,10 +2,24 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
+
+const DATE = 'Y-m-d';
 const CONVERT_HOURS = 60;
 
 class AttendanceService
 {
+    /**
+     * 今日の日付
+     * @var string $today
+     */
+    public $today;
+
+    public function __construct()
+    {
+        $this->today = Carbon::today()->format(DATE);
+    }
+
     /**
      * 出社日のみの合計学習時間の算出
      *
