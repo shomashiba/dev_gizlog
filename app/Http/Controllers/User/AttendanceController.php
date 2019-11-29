@@ -6,15 +6,17 @@ use App\Http\Requests\User\AttendanceRequest;
 use App\Http\Requests\User\RegisterTimeRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Services\AttendanceService;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-const CONVERT_HOURS = 60;
+const DATETIME = 'Y-m-d';
 
 class AttendanceController extends Controller
 {
 
     private $attendance;
+    private $service;
 
     /**
      * ユーザーの認証状態チェック
@@ -22,10 +24,12 @@ class AttendanceController extends Controller
      *
      * @param Attendance $attendance
      */
-    public function __construct(Attendance $attendance)
+    public function __construct(Attendance $attendance, 
+                                AttendanceService $service)
     {
         $this->middleware('auth');
         $this->attendance = $attendance;
+        $this->service = $service;
     }
 
     /**
@@ -36,36 +40,11 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendance = $this->attendance->where('user_id', Auth::id())
-            ->where('date', Carbon::now()->format('Y-m-d'))
-            ->first();
-        $status = $this->confirmAttendance($attendance);
+        $attendance = $this->attendance->fetchAttendance(
+            Auth::id(), Carbon::today()->format(DATETIME)
+        );
+        $status = $this->service->confirmAttendanceState($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
-    }
-
-    /**
-     * ユーザーの出退勤状態の判別
-     *
-     * @param Illuminate\Support\Collection $data
-     * @return string
-     */
-    public function confirmAttendance($data)
-    {
-        if (!empty($data->is_absent)) {
-            return 'absent';
-        }
-
-        if (empty($data->start_time) && empty($data->end_time)) {
-            return 'not_attend';
-        }
-
-        if (!empty($data->start_time) && empty($data->end_time)) {
-            return 'attend';
-        }
-
-        if (!empty($data->start_time) && !empty($data->end_time)) {
-            return 'leave';
-        }
     }
 
     /**
@@ -118,7 +97,7 @@ class AttendanceController extends Controller
         $absence['is_absent'] = true;
         $this->attendance->updateOrCreate(
             [
-                'date' => Carbon::now()->format('Y-m-d'), 
+                'date' => Carbon::today()->format(DATETIME), 
                 'user_id' => Auth::id()
             ],
             $absence
@@ -146,13 +125,8 @@ class AttendanceController extends Controller
     {
         $modify = $request->validated();
         $modify['is_request'] = true;
-        $this->attendance->update(
-            [
-                'date' => $modify['date'], 
-                'user_id' => Auth::id()
-            ],
-            $modify
-        );
+        $this->attendance->feachAttendance(Auth::id(), $modify['date'])
+                         ->update($modify);
         return redirect()->route('attendance.index');
     }
 
@@ -163,28 +137,9 @@ class AttendanceController extends Controller
      */
     public function showMypage()
     {
-        $attendances = $this->attendance->where('user_id', Auth::id())
-            ->orderBy('date','desc')
-            ->get();
-        $totalStudyTime = $this->calcStudyTime($attendances);
+        $attendances = $this->attendance->fetchMyAttendance(Auth::id());
+        $totalStudyTime = $this->service->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
     }
 
-    /**
-     * 出社日の合計学習時間の産出
-     *
-     * @param Illuminate\Support\Collection $datas
-     * @return int $totalStudyTime
-     */
-    public function calcStudyTime($datas)
-    {
-        $totalStudyHours = 0;
-        $datas = $datas->whereNotIn('end_time', '')->all();
-
-        foreach ($datas as $data) {
-            $studyMinutes = $data->start_time->diffInMinutes($data->end_time);
-            $totalStudyHours += round($studyMinutes / CONVERT_HOURS);
-        }
-        return $totalStudyHours;
-    }
 }

@@ -6,18 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
-    protected $table = 'attendance';
 
-    protected $fillable = [
-        'user_id',
-        'is_absent',
-        'is_request',
-        'absent_reason',
-        'request_reason',
-        'date',
-        'start_time',
-        'end_time'
-    ];
+    public $timestamps = false;
+    protected $table = 'attendance';
 
     protected $dates = [
         'date',
@@ -30,10 +21,35 @@ class Attendance extends Model
         'is_request' => 'boolean'
     ];
 
-    public $timestamps = false;
-
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * 日付とユーザーIDによる勤怠情報取得
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $id
+     * @param string $day
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFetchAttendance($query, $id, $day)
+    {
+        return $query->where('user_id', $id)
+                     ->where('date', $day);
+    }
+
+    /**
+     * ユーザーの勤怠情報を取得
+     *
+     * @param int $id
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function fetchMyAttendance($id)
+    {
+        return $this->where('user_id', $id)
+                    ->latest('date')
+                    ->get();
     }
 }

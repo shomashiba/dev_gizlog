@@ -34,9 +34,9 @@
       <tbody>
         @foreach ($attendances as $attendance)
           <tr class="row @if (isset($attendance->is_absent) && $attendance->is_absent === true) {{ 'absent-row' }} @endif">
-            <td class="col-xs-2">{{ (isset($attendance->date)) ? $attendance->date->format('m/d (D)') : '-' }}</td>
-            <td class="col-xs-3">{{ (isset($attendance->start_time)) ? $attendance->start_time->format('G:i') : '-' }}</td>
-            <td class="col-xs-3">{{ (isset($attendance->end_time)) ? $attendance->end_time->format('G:i') : '-' }}</td>
+            <td class="col-xs-2">{{ $attendance->date ? $attendance->date->format('m/d (D)') : '-' }}</td>
+            <td class="col-xs-3">{{ $attendance->start_time ? $attendance->start_time->format('H:i') : '-' }}</td>
+            <td class="col-xs-3">{{ $attendance->end_time ? $attendance->end_time->format('H:i') : '-' }}</td>
             <td class="col-xs-2">
               @if ($attendance->is_absent === true)
                 {{ '欠席' }}
