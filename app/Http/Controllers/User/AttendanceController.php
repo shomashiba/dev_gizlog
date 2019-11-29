@@ -21,8 +21,7 @@ class AttendanceController extends Controller
      *
      * @param Attendance $attendance
      */
-    public function __construct(Attendance $attendance, 
-                                AttendanceService $service)
+    public function __construct(Attendance $attendance, AttendanceService $service)
     {
         $this->middleware('auth');
         $this->attendance = $attendance;
@@ -37,7 +36,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendance = $this->attendance->fetchAttendance(Auth::id(), $this->service->today);
+        $attendance = $this->service->fetchAttendance(Auth::id(), $this->service->today);
         $status = $this->service->confirmAttendanceState($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
     }
@@ -66,7 +65,7 @@ class AttendanceController extends Controller
     public function registerEndTime(RegisterTimeRequest $request, $id) 
     {
         $attendance = $request->validated();
-        $this->attendance->find($id)->update($attendance);
+        $this->attendance->find($id)->update(['end_time' => $attendance['end_time']]);
         return redirect()->route('attendance.index');
     }
 
@@ -90,7 +89,7 @@ class AttendanceController extends Controller
     {
         $inputs = $request->validated();
         $inputs['user_id'] = Auth::id();
-        $this->attendance->storeAbsence($inputs, $this->service->today);
+        $this->service->storeAbsence($inputs, $this->service->today);
         return redirect()->route('attendance.index');
     }
 
@@ -114,7 +113,7 @@ class AttendanceController extends Controller
     {
         $inputs = $request->validated();
         $inputs['user_id'] = Auth::id();
-        $this->attendance->storeModify($inputs, $this->service->today);
+        $this->service->storeModify($inputs, $this->service->today);
         return redirect()->route('attendance.index');
     }
 
@@ -125,8 +124,8 @@ class AttendanceController extends Controller
      */
     public function showMypage()
     {
-        $attendances = $this->attendance->fetchMyAttendance(Auth::id());
-        $totalStudyTime = $this->service->calcStudyTime($attendances);
+        $attendances = $this->service->fetchMyAttendance(Auth::id());
+        $totalStudyTime = $this->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
     }
 
