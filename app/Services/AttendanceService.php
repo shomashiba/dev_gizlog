@@ -86,7 +86,7 @@ class AttendanceService
     public function yesterday($date)
     {
         $date = new Carbon($date);
-        $yesterday = $date->subDay();
+        $yesterday = $date->subDay()->format(DATE);
         return $yesterday;
     }
 
