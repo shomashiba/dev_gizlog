@@ -10,6 +10,17 @@ class Attendance extends Model
     public $timestamps = false;
     protected $table = 'attendance';
 
+    protected $fillable = [
+        'user_id',
+        'is_absent',
+        'is_request',
+        'absent_reason',
+        'request_reason',
+        'date',
+        'start_time',
+        'end_time'
+    ];
+    
     protected $dates = [
         'date',
         'start_time',
