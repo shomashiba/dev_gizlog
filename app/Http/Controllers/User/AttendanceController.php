@@ -125,7 +125,7 @@ class AttendanceController extends Controller
     public function showMypage()
     {
         $attendances = $this->service->fetchMyAttendance(Auth::id());
-        $totalStudyTime = $this->calcStudyTime($attendances);
+        $totalStudyTime = $this->service->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
     }
 

@@ -146,7 +146,7 @@ class AttendanceService
      */
     public function fetchMyAttendance($id)
     {
-        return $this->where('user_id', $id)
+        return $this->attendance->where('user_id', $id)
                     ->latest('date')
                     ->get();
     }
