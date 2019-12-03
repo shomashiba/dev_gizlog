@@ -22,16 +22,18 @@ class AttendanceService
     /**
      * 出社日のみの合計学習時間の算出
      *
-     * @param Illuminate\Support\Collection $datas
+     * @param Illuminate\Support\Collection $attendance
      * @return int $totalStudyHours
      */
-    public function calcStudyTime($datas)
+    public function calcStudyTime($attendances)
     {
         $totalStudyHours = 0;
-        $datas = $datas->whereNotIn('end_time', '')->all();
+        $filtered = $attendances->reject(function ($attendance) {
+            return is_null($attendance->end_time);
+        });
 
-        foreach ($datas as $data) {
-            $studyMinutes = $data->start_time->diffInMinutes($data->end_time);
+        foreach ($filtered as $attendance) {
+            $studyMinutes = $attendance->start_time->diffInMinutes($attendance->end_time);
             $totalStudyHours += round($studyMinutes / CONVERT_HOURS);
         }
         return $totalStudyHours;
@@ -40,27 +42,27 @@ class AttendanceService
     /**
      * ユーザーの出退勤状態の判別
      *
-     * @param Illuminate\Support\Collection $data
+     * @param Illuminate\Support\Collection $attendance
      * @return string
      */
-    public function confirmAttendanceState($data)
+    public function confirmAttendanceState($attendance)
     {
-        if (!empty($data->is_absent)) {
+        if (!empty($attendance->is_absent)) {
             return 'absent';
         }
 
-        if (!empty($data->start_time) && empty($data->end_time)) {
+        if (!empty($attendance->start_time) && empty($attendance->end_time)) {
             if ($this->confirmOvertime()) {
                 return 'attend';
             }
             return 'attend';
         }
 
-        if (empty($data->start_time) && empty($data->end_time)) {
+        if (empty($attendance->start_time) && empty($attendance->end_time)) {
             return 'not_attend';
         }
         
-        if (!empty($data->start_time) && !empty($data->end_time)) {
+        if (!empty($attendance->start_time) && !empty($attendance->end_time)) {
             return 'leave';
         }
     }
@@ -110,32 +112,32 @@ class AttendanceService
     /**
      * 欠席情報を保存
      *
-     * @param array $datas
+     * @param array $attendance
      * @param string $date
      */
-    public function storeAbsence($datas, $date)
+    public function storeAbsence($inputs, $date)
     {
-        $datas['is_absent'] = true;
+        $inputs['is_absent'] = true;
         $this->attendance->updateOrCreate(
             [
-                'user_id' => $datas['user_id'],
+                'user_id' => $inputs['user_id'],
                 'date' => $date
             ],
-            $datas
+            $inputs
         );
     }
 
     /**
      * 修正申請を保存
      *
-     * @param array $datas
+     * @param array $attendance
      * @param string $date
      */
-    public function storeModify($datas, $date)
+    public function storeModify($inputs, $date)
     {
-        $datas['is_request'] = true;
-        $this->attendance->searchAttendance($datas['user_id'], $date)
-             ->update($datas);
+        $inputs['is_request'] = true;
+        $this->attendance->searchAttendance($inputs['user_id'], $date)
+             ->update($inputs);
     }
 
     /**
