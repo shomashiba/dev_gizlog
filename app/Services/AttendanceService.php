@@ -5,17 +5,17 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\Models\Attendance;
 
-const DATE = 'Y-m-d';
-const CONVERT_HOURS = 60;
-const START_WORK = '09:00:00';
-
 class AttendanceService
 {
+    const DATE = 'Y-m-d';
+    const MINUTE = 60;
+    const START_WORK = '09:00:00';
+
     public $today;
 
     public function __construct(Attendance $attendance)
     {
-        $this->today = Carbon::today()->format(DATE);
+        $this->today = Carbon::today()->format(self::DATE);
         $this->attendance = $attendance;
     }
 
@@ -34,7 +34,7 @@ class AttendanceService
 
         foreach ($filtered as $attendance) {
             $studyMinutes = $attendance->start_time->diffInMinutes($attendance->end_time);
-            $totalStudyHours += round($studyMinutes / CONVERT_HOURS);
+            $totalStudyHours += round($studyMinutes /self::MINUTE);
         }
         return $totalStudyHours;
     }
@@ -74,7 +74,7 @@ class AttendanceService
      */
     public function confirmOvertime()
     {
-        $startWork = new Carbon(START_WORK);
+        $startWork = new Carbon(self::START_WORK);
         $currentTime = Carbon::now();
         return ($currentTime < $startWork) ? true : false;
     }
@@ -88,7 +88,7 @@ class AttendanceService
     public function yesterday($date)
     {
         $date = new Carbon($date);
-        $yesterday = $date->subDay()->format(DATE);
+        $yesterday = $date->subDay()->format(self::DATE);
         return $yesterday;
     }
 
