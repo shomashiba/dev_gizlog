@@ -32,7 +32,7 @@ class AttendanceController extends Controller
      * 勤怠登録画面。
      * ユーザーの勤怠情報を確認。
      *
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -72,7 +72,7 @@ class AttendanceController extends Controller
     /**
      * 欠席登録画面
      *
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\View\View
      */
     public function showAbsence()
     {
@@ -96,7 +96,7 @@ class AttendanceController extends Controller
     /**
      * 修正申請画面
      *
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\View\View
      */
     public function showModify()
     {
@@ -120,7 +120,7 @@ class AttendanceController extends Controller
     /**
      * マイページ画面
      *
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\View\View
      */
     public function showMypage()
     {
