@@ -115,13 +115,13 @@ class AttendanceService
      * @param array $attendance
      * @param string $date
      */
-    public function storeAbsence($inputs, $date)
+    public function storeAbsence($inputs, $id)
     {
         $inputs['is_absent'] = true;
         $this->attendance->updateOrCreate(
             [
-                'user_id' => $inputs['user_id'],
-                'date' => $date
+                'user_id' => $id,
+                'date' => $this->today,
             ],
             $inputs
         );
@@ -133,10 +133,10 @@ class AttendanceService
      * @param array $attendance
      * @param string $date
      */
-    public function storeModify($inputs, $date)
+    public function storeModify($inputs, $id)
     {
         $inputs['is_request'] = true;
-        $this->attendance->searchAttendance($inputs['user_id'], $date)
+        $this->attendance->searchAttendance($id, $this->today)
              ->update($inputs);
     }
 

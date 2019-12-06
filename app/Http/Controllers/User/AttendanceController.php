@@ -34,7 +34,8 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendance = $this->service->fetchAttendance(Auth::id(), $this->service->today);
+        $id = Auth::id();
+        $attendance = $this->service->fetchAttendance($id, $this->service->today);
         $status = $this->service->confirmAttendanceState($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
     }
@@ -86,8 +87,8 @@ class AttendanceController extends Controller
     public function registerAbsence(AttendanceRequest $request)
     {
         $inputs = $request->validated();
-        $inputs['user_id'] = Auth::id();
-        $this->service->storeAbsence($inputs, $this->service->today);
+        $id = Auth::id();
+        $this->service->storeAbsence($inputs, $id);
         return redirect()->route('attendance.index');
     }
 
@@ -110,8 +111,8 @@ class AttendanceController extends Controller
     public function registerModify(AttendanceRequest $request)
     {
         $inputs = $request->validated();
-        $inputs['user_id'] = Auth::id();
-        $this->service->storeModify($inputs, $this->service->today);
+        $id = Auth::id();
+        $this->service->storeModify($inputs, $id);
         return redirect()->route('attendance.index');
     }
 
@@ -122,7 +123,8 @@ class AttendanceController extends Controller
      */
     public function showMypage()
     {
-        $attendances = $this->service->fetchMyAttendance(Auth::id());
+        $id = Auth::id();
+        $attendances = $this->service->fetchMyAttendance($id);
         $totalStudyTime = $this->service->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
     }
