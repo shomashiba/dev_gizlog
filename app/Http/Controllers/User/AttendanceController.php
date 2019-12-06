@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class AttendanceController extends Controller
 {
 
-    private $attendance;
     private $service;
 
     /**
@@ -21,10 +20,9 @@ class AttendanceController extends Controller
      *
      * @param Attendance $attendance
      */
-    public function __construct(Attendance $attendance, AttendanceService $service)
+    public function __construct(AttendanceService $service)
     {
         $this->middleware('auth');
-        $this->attendance = $attendance;
         $this->service = $service;
     }
 
@@ -51,7 +49,7 @@ class AttendanceController extends Controller
     {
         $inputs = $request->validated();
         $inputs['user_id'] = Auth::id();
-        $this->attendance->create($inputs);
+        $this->service->attendance->create($inputs);
         return redirect()->route('attendance.index');
     }
 
@@ -65,7 +63,7 @@ class AttendanceController extends Controller
     public function registerEndTime(RegisterTimeRequest $request, $id) 
     {
         $attendance = $request->validated();
-        $this->attendance->find($id)->update(['end_time' => $attendance['end_time']]);
+        $this->service->attendance->find($id)->update(['end_time' => $attendance['end_time']]);
         return redirect()->route('attendance.index');
     }
 
