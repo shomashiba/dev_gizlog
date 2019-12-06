@@ -47,7 +47,7 @@ class AttendanceController extends Controller
      */
     public function registerStartTime(RegisterTimeRequest $request) 
     {
-        $inputs = $request->validated();
+        $inputs = $request->only('date', 'start_time');
         $inputs['user_id'] = Auth::id();
         $this->service->attendance->create($inputs);
         return redirect()->route('attendance.index');
@@ -62,8 +62,8 @@ class AttendanceController extends Controller
      */
     public function registerEndTime(RegisterTimeRequest $request, $id) 
     {
-        $attendance = $request->validated();
-        $this->service->attendance->find($id)->update(['end_time' => $attendance['end_time']]);
+        $input = $request->only('end_time');
+        $this->service->attendance->find($id)->update($input);
         return redirect()->route('attendance.index');
     }
 
