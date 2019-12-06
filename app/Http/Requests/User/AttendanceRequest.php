@@ -34,11 +34,8 @@ class AttendanceRequest extends FormRequest
     {
         return [
             'required'                 => '入力必須の項目です',
-            'absent_reason.max'        => '500文字以内で入力してください。',
-            'request_reason.max'       => '500文字以内で入力してください。',
-            'date.required'            => '入力必須の項目です',
+            'max'                      => ':max文字以内で入力してください。',
             'date.before_or_equal'     => '今日以前の日付を入力してください。',
-            'date'
         ];
     }
 }
