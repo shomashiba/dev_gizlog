@@ -20,6 +20,19 @@ class AttendanceService
     }
 
     /**
+     * 出社日のみ取得
+     *
+     * @param Illuminate\Support\Collection $attendances
+     * @return Illuminate\Support\Collection
+     */
+    public function fetchOnlyAtWorkDay($attendances)
+    {
+        return $attendances->reject(function ($attendance) {
+            return is_null($attendance->start_time) || is_null($attendance->end_time);
+        });
+    }
+
+    /**
      * 出社日のみの合計学習時間の算出
      *
      * @param Illuminate\Support\Collection $attendance
@@ -28,15 +41,13 @@ class AttendanceService
     public function calcStudyTime($attendances)
     {
         $totalStudyHours = 0;
-        $filtered = $attendances->reject(function ($attendance) {
-            return is_null($attendance->end_time);
-        });
+        $filtered = $this->fetchOnlyAtWorkDay($attendances);
 
         foreach ($filtered as $attendance) {
             $studyMinutes = $attendance->start_time->diffInMinutes($attendance->end_time);
-            $totalStudyHours += round($studyMinutes /self::MINUTE);
+            $totalStudyHours += $studyMinutes;
         }
-        return $totalStudyHours;
+        return round($totalStudyHours / self::MINUTE);
     }
 
     /**
