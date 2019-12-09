@@ -33,20 +33,20 @@
       </thead>
       <tbody>
         @foreach ($attendances as $attendance)
-          <tr class="row @if (isset($attendance->is_absent) && $attendance->is_absent === true) {{ 'absent-row' }} @endif">
+          <tr class="row @if ($attendance->is_absent) absent-row @endif">
             <td class="col-xs-2">{{ $attendance->date ? $attendance->date->format('m/d (D)') : '-' }}</td>
-            <td class="col-xs-3">{{ $attendance->start_time ? $attendance->start_time->format('H:i') : '-' }}</td>
-            <td class="col-xs-3">{{ $attendance->end_time ? $attendance->end_time->format('H:i') : '-' }}</td>
+            <td class="col-xs-3">{{ isset($attendance->start_time) ? $attendance->start_time->format('H:i') : '-' }}</td>
+            <td class="col-xs-3">{{ isset($attendance->end_time) ? $attendance->end_time->format('H:i') : '-' }}</td>
             <td class="col-xs-2">
-              @if ($attendance->is_absent === true)
-                {{ '欠席' }}
+              @if ($attendance->is_absent)
+                欠席
               @elseif (isset($attendance->start_time, $attendance->end_time))
-                {{ '出社' }}
+                出社
               @elseif (isset($attendance->start_time))
-                {{ '研修中' }}
+                研修中
               @endif
             </td>
-            <td class="col-xs-2">{{ (isset($attendance->is_requesting) && $attendance->is_requesting) ? '申請中' : '-' }}</td>
+            <td class="col-xs-2">{{ $attendance->is_requesting ? '申請中' : '-' }}</td>
           </tr>
         @endforeach
       </tbody>
