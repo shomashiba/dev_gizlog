@@ -8,14 +8,14 @@
     <div class="my-info day-info">
       <p>学習経過日数</p>
       <div class="study-hour-box clearfix">
-        <div class="userinfo-box"><img src="{{ $attendances->first()->user->avatar }}"></div>
+        <div class="userinfo-box"><img src="{{ Auth::user()->avatar }}"></div>
         <p class="study-hour"><span>{{ $attendances->where('is_absent', false)->whereNotIn('end_time', '')->count() }}</span>日</p>
       </div>
     </div>
     <div class="my-info">
       <p>累計学習時間</p>
       <div class="study-hour-box clearfix">
-        <div class="userinfo-box"><img src="{{ $attendances->first()->user->avatar }}"></div>
+        <div class="userinfo-box"><img src="{{ Auth::user()->avatar }}"></div>
         <p class="study-hour"><span>{{ $totalStudyTime }}</span>時間</p>
       </div>
     </div>
@@ -46,7 +46,7 @@
                 {{ '研修中' }}
               @endif
             </td>
-            <td class="col-xs-2">{{ (isset($attendance->is_request) && $attendance->is_request === true) ? '申請中' : '-' }}</td>
+            <td class="col-xs-2">{{ (isset($attendance->is_requesting) && $attendance->is_requesting) ? '申請中' : '-' }}</td>
           </tr>
         @endforeach
       </tbody>
