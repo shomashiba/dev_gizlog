@@ -35,7 +35,7 @@ class AttendanceController extends Controller
     public function index()
     {
         $id = Auth::id();
-        $attendance = $this->service->fetchAttendance($id, $this->service->today);
+        $attendance = $this->service->fetchAttendance($id);
         $status = $this->service->confirmAttendanceState($attendance);
         return view('user.attendance.index', compact('attendance', 'status'));
     }

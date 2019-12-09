@@ -25,8 +25,8 @@ class RegisterTimeRequest extends FormRequest
     {
         return [
             'date'       => 'sometimes|date|date_equals:today',
-            'start_time' => 'sometimes|date|date_equals:today',
-            'end_time'   => 'sometimes|date|date_equals:today'
+            'start_time' => 'sometimes|date',
+            'end_time'   => 'sometimes|date'
         ];
     }
 }

@@ -62,45 +62,27 @@ class AttendanceService
             return 'absent';
         }
 
-        if (!empty($attendance->start_time) && empty($attendance->end_time)) {
-            if ($this->confirmOvertime()) {
-                return 'attend';
-            }
+        if (empty($attendance->start_time)) {
+            return 'not_attend';
+        }
+
+        if (empty($attendance->end_time)) {
             return 'attend';
         }
 
-        if (empty($attendance->start_time) && empty($attendance->end_time)) {
-            return 'not_attend';
-        }
-        
-        if (!empty($attendance->start_time) && !empty($attendance->end_time)) {
-            return 'leave';
-        }
+        return 'leave';
     }
 
     /**
-     * 残業判定。残業中ならtureを返す。
+     * 残業判定。始業時間より前の場合、残業中。
      *
      * @return boolean
      */
-    public function confirmOvertime()
+    public function isOvertime()
     {
         $startWork = new Carbon(self::START_WORK);
         $currentTime = Carbon::now();
-        return ($currentTime < $startWork) ? true : false;
-    }
-
-    /**
-     * 引数の日付の前日を取得
-     *
-     * @param string $date
-     * @return string $yesterday
-     */
-    public function yesterday($date)
-    {
-        $date = new Carbon($date);
-        $yesterday = $date->subDay()->format(self::DATE);
-        return $yesterday;
+        return $currentTime->lt($startWork);
     }
 
     /**
@@ -112,12 +94,12 @@ class AttendanceService
      * @param string $date
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function fetchAttendance($id, $date)
+    public function fetchAttendance($id)
     {
-        if ($this->confirmOvertime()) {
-            return $this->attendance->searchAttendance($id, $this->yesterday($date))->first();
+        if ($this->isOvertime()) {
+            return $this->attendance->searchAttendance($id, Carbon::yesterday())->first();
         }
-        return $this->attendance->searchAttendance($id, $date)->first();
+        return $this->attendance->searchAttendance($id, $this->today)->first();
     }
 
     /**
