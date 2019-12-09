@@ -40,9 +40,9 @@
             <td class="col-xs-2">
               @if ($attendance->is_absent)
                 欠席
-              @elseif (isset($attendance->start_time, $attendance->end_time))
+              @elseif (isset($attendance->end_time))
                 出社
-              @elseif (isset($attendance->start_time))
+              @else
                 研修中
               @endif
             </td>
