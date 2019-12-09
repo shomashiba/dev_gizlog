@@ -130,7 +130,7 @@ class AttendanceService
     {
         $inputs['is_requesting'] = true;
         $this->attendance->searchAttendance($id, $this->today)
-             ->update($inputs);
+                         ->update($inputs);
     }
 
     /**
@@ -142,7 +142,7 @@ class AttendanceService
     public function fetchMyAttendanceList($id)
     {
         return $this->attendance->where('user_id', $id)
-                    ->latest('date')
-                    ->get();
+                                ->latest('date')
+                                ->get();
     }
 }
