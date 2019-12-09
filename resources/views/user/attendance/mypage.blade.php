@@ -9,7 +9,7 @@
       <p>学習経過日数</p>
       <div class="study-hour-box clearfix">
         <div class="userinfo-box"><img src="{{ Auth::user()->avatar }}"></div>
-        <p class="study-hour"><span>{{ $attendances->where('is_absent', false)->whereNotIn('end_time', '')->count() }}</span>日</p>
+        <p class="study-hour"><span>{{ $totalStudyDays }}</span>日</p>
       </div>
     </div>
     <div class="my-info">

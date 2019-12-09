@@ -125,8 +125,9 @@ class AttendanceController extends Controller
     {
         $id = Auth::id();
         $attendances = $this->service->fetchMyAttendanceList($id);
+        $totalStudyDays = $this->service->countStudyDays($attendances);
         $totalStudyTime = $this->service->calcStudyTime($attendances);
-        return view('user.attendance.mypage', compact('attendances', 'totalStudyTime'));
+        return view('user.attendance.mypage', compact('attendances', 'totalStudyDays','totalStudyTime'));
     }
 
 }

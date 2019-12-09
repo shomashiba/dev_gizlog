@@ -33,6 +33,19 @@ class AttendanceService
     }
 
     /**
+     * 出社日のみの学習日数のカウント
+     *
+     * @param Illuminate\Support\Collection $attendances
+     * @return int
+     */
+    public function countStudyDays($attendances)
+    {
+        return $attendances->where('is_absent', false)
+                           ->whereNotIn('end_time', '')
+                           ->count();
+    }
+
+    /**
      * 出社日のみの合計学習時間の算出
      *
      * @param Illuminate\Support\Collection $attendance
