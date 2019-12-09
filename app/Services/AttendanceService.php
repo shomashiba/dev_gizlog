@@ -128,7 +128,7 @@ class AttendanceService
      */
     public function storeModify($inputs, $id)
     {
-        $inputs['is_request'] = true;
+        $inputs['is_requesting'] = true;
         $this->attendance->searchAttendance($id, $this->today)
              ->update($inputs);
     }
@@ -139,7 +139,7 @@ class AttendanceService
      * @param int $id
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function fetchMyAttendance($id)
+    public function fetchMyAttendanceList($id)
     {
         return $this->attendance->where('user_id', $id)
                     ->latest('date')

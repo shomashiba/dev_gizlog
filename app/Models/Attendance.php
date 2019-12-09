@@ -13,7 +13,7 @@ class Attendance extends Model
     protected $fillable = [
         'user_id',
         'is_absent',
-        'is_request',
+        'is_requesting',
         'absent_reason',
         'request_reason',
         'date',
@@ -29,7 +29,7 @@ class Attendance extends Model
 
     protected $casts = [
         'is_absent' => 'boolean',
-        'is_request' => 'boolean'
+        'is_requesting' => 'boolean'
     ];
 
     public function user()

@@ -17,7 +17,7 @@ class CreateAttendanceTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('is_absent')->default(0);
-            $table->integer('is_request')->default(0);
+            $table->integer('is_requesting')->default(0);
             $table->string('absent_reason', 500)->nullable();
             $table->string('request_reason', 500)->nullable();
             $table->date('date')->nullable();
