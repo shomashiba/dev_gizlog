@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-
     private $service;
 
     /**
@@ -129,5 +128,4 @@ class AttendanceController extends Controller
         $totalStudyTime = $this->service->calcStudyTime($attendances);
         return view('user.attendance.mypage', compact('attendances', 'totalStudyDays','totalStudyTime'));
     }
-
 }
